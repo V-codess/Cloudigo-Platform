@@ -1,0 +1,122 @@
+
+/* CARD */
+.card {
+  width: 420px;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  padding: 20px;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: Arial, sans-serif;
+}
+
+/* TITLE */
+h2 {
+  text-align: center;
+  color: #60a5fa;
+}
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+
+  background: #0b1220;
+  color: #e5e7eb;
+
+  border: 1px solid #374151;
+}
+.error-box {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #f87171;
+
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+.days-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.day-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.day-item:hover {
+  background: #eef4ff;
+  border-color: #4f46e5;
+  color: #111827;
+}
+
+.day-item input {
+  cursor: pointer;
+}
+
+.day-item span {
+  font-size: 14px;
+  text-transform: capitalize;
+}
+/* UNIFORM INPUT WIDTH */
+input,
+textarea,
+select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 8px;
+
+  border: 1px solid #374151;
+  background: #0b1220;
+  color: #e5e7eb;
+
+  font-size: 14px;
+}
+
+/* FOCUS EFFECT */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+
+  background: #3b82f6;
+  color: white;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2563eb;
+}
+
+/* ERROR */
+.error {
+  color: #f87171;
+  font-size: 12px;
+  margin-top: -6px;
+}

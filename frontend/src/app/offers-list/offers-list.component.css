@@ -1,0 +1,78 @@
+.offerscontainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  padding: 20px;
+  background-color: #0b1220 !important;
+}
+
+/* CARD */
+.offer-card {
+  width: 260px;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 14px;
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  transition: all 0.25s ease;
+}
+
+/* hover effect */
+.offer-card:hover { 
+  transform: translateY(-6px);
+  border-color: #3b82f6;
+  box-shadow: 0 12px 30px rgba(59,130,246,0.15);
+}
+
+/* title */
+
+
+
+/* text */
+.offer-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* badge */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+
+  background: #374151;
+  color: #e5e7eb;
+  width: fit-content;
+}
+
+/* active badge state */
+.badge.active {
+  background: #22c55e;
+  color: #0b1220;
+}
+
+/* button */
+button {
+  margin-top: 6px;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #2563eb;
+}

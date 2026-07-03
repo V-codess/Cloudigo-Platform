@@ -1,0 +1,29 @@
+* {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+body {
+  margin: 0;
+  font-family: system-ui, Arial;
+}
+
+h1, h2 {
+  margin: 0;
+  text-align: center;
+  padding: 20px;
+}
+
+button {
+  cursor: pointer;
+}
+.layout {
+  display: flex;
+  justify-content: space-evenly;
+
+}
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+}

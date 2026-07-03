@@ -1,0 +1,85 @@
+<div class="error-box" *ngIf="backendError">
+  {{ backendError }}
+</div>
+<div class="card">
+
+  <h2>Add Offer</h2>
+
+  <input placeholder="Title" [(ngModel)]="title">
+  <div class="error" *ngIf="submitted && !title">Required</div>
+
+  <textarea placeholder="Description" [(ngModel)]="description"></textarea>
+  <div class="error" *ngIf="submitted && !description">Required</div>
+
+  <input placeholder="Merchant Name" [(ngModel)]="merchantName">
+  <div class="error" *ngIf="submitted && !merchantName">Required</div>
+
+  <select [(ngModel)]="category">
+    <option value="" disabled selected>Select a category</option>
+    <option value="food_drink">Food & Drink</option>
+    <option value="fashion">Fashion</option>
+    <option value="kids">Kids</option>
+    <option value="sports_fitness">Sports & Fitness</option>
+    <option value="health">Health</option>
+    <option value="entertainment">Entertainment</option>
+    <option value="jewellery">Jewellery</option>
+    <option value="watches">Watches</option>
+    <option value="beauty">Beauty</option>
+    <option value="home">Home</option>
+    <option value="artists">Artists</option>
+    <option value="weddings">Weddings</option>
+    <option value="toys">Toys</option>
+    <option value="gifts">Gifts</option>
+    <option value="travel">Travel</option>
+    <option value="electronics">Electronics</option>
+    <option value="online_shopping">Online Shopping</option>
+    <option value="property_market">Property Market</option>
+    <option value="automotive">Automotive</option>
+
+  </select>
+  <div class="error" *ngIf="submitted && !category">Required</div>
+
+  <input type="number" placeholder="Discount" [(ngModel)]="discount">
+  <div class="error" *ngIf="submitted && !discount">Required</div>
+
+  <input placeholder="Outlets" [(ngModel)]="outlets">
+  <div class="error" *ngIf="submitted && !outlets">Required</div>
+
+  <textarea placeholder="Terms and Conditions" [(ngModel)]="termsAndConditions"></textarea>
+  <div class="error" *ngIf="submitted && !termsAndConditions">Required</div>
+
+  <select [(ngModel)]="offerType">
+    <option value="" disabled selected>Select your offer type</option>
+    <option value="basic">Basic</option>
+    <option value="premium">Premium</option>
+  </select>
+  <label>Availability</label>
+  <div class="days-box">
+    <label class="day-item" *ngFor="let day of days">
+      <input type="checkbox" [value]="day" (change)="toggleDay(day, $event)" [checked]="availability.includes(day)" />
+      <span>{{ day | titlecase }}</span>
+    </label>
+  </div>
+  <select [(ngModel)]="usageLimit">
+    <option value="" disabled selected>Usage limit for an offer</option>
+    <option value="unlimited">Unlimited</option>
+    <option value="once">Once</option>
+    <option value="twice">Twice</option>
+    <option value="week">Week</option>
+    <option value="month">Month</option>
+    <option value="year">Year</option>
+  </select>
+  <div class="error" *ngIf="submitted && !offerType">Required</div>
+  <label>Start Date</label>
+  <input type="date" placeholder="start date" [(ngModel)]="startDate" [min]="today">
+  <div class="error" *ngIf="submitted && !startDate">Required</div>
+
+  <label>End Date</label>
+  <input type="date" placeholder="end date" [(ngModel)]="endDate" [min]="startDate || today">
+  <div class="error" *ngIf="submitted && !endDate">Required</div>
+  <label>Image</label>
+
+  <input type="text" placeholder="Image URL" [(ngModel)]="image" />
+  <button (click)="addOffer()">Add Offer</button>
+
+</div>
