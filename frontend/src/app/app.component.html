@@ -1,11 +1,43 @@
 <div class="header">
-  <h1>Cloudigo Platform</h1>
+  <div class="header-inner">
+    <div class="brand">
+      <img src="favicon.ico" alt="Cloudigo" class="logo" />
+      <div>
+        <h1>Cloudigo Control Panel</h1>
+        <p>Manage partner offers</p>
+      </div>
+    </div>
+    <span class="header-badge">Internal · Partners</span>
+  </div>
 </div>
 
-<div class="layout">
+<nav class="tabs">
+  <div class="tabs-inner">
+    <button
+      type="button"
+      class="tab"
+      [class.active]="activeTab === 'list'"
+      (click)="setTab('list')"
+    >
+      Offers list
+    </button>
+    <button
+      type="button"
+      class="tab"
+      [class.active]="activeTab === 'add'"
+      (click)="setTab('add')"
+    >
+      Add offer
+    </button>
+  </div>
+</nav>
 
-  <app-add-offer (refresh)="list.refresh()"></app-add-offer>
+<main class="content">
+  <section class="panel" [hidden]="activeTab !== 'list'">
+    <app-offers-list #list></app-offers-list>
+  </section>
 
-  <app-offers-list #list></app-offers-list>
-
-</div>
+  <section class="panel panel-form" [hidden]="activeTab !== 'add'">
+    <app-add-offer (refresh)="onOfferAdded()"></app-add-offer>
+  </section>
+</main>

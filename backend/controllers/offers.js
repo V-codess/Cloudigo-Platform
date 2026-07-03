@@ -1,6 +1,4 @@
-const express = require("express");
 const Offers = require("../model/offerSchema");
-const app = express();
 
 const getAllOffers = async (req, res) => {
   try {
@@ -87,6 +85,12 @@ const postAnOffer = async (req, res) => {
       offer: createdOffer,
     });
   } catch (error) {
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        message: "Validation failed",
+        error: error.message,
+      });
+    }
     return res.status(500).json({
       message: "Error creating offer",
       error: error.message,
@@ -115,7 +119,7 @@ const updateOfferStatus = async (req, res) => {
     if (foundOffer.status === status) {
       return res.status(200).json({
         message: "Status already set to this value",
-        offer: foundOffer.status,
+        offer: foundOffer,
       });
     }
 

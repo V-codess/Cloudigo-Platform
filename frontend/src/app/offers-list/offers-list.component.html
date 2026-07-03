@@ -1,80 +1,87 @@
-<h4>Offers available</h4>
-<p>Total active offers: {{ activeOffersCount }}</p>
-<p>Total inactive offers: {{ inactiveOffersCount }}</p>
+<div class="list-toolbar">
+  <h4>All offers</h4>
 
-<div style=" display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
-  padding: 20px;
-  background-color: #0b1220 !important;">
-
-  <div style=" width: 260px;
-    background: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 14px;
-    padding: 16px;
-  
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    transition: all 0.25s ease;" *ngFor="let o of offers">
-  
-    <img [src]="o.image" [alt]="o.title" style="
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      background: #1f2937;
-    " />
-    <h3 style="
-      margin: 0;
-      font-size: 16px;
-      color: #e5e7eb;">{{ o.title }}</h3>
-    
-    <p style=" margin: 0;
-      font-size: 14px;
-      color: #94a3b8;">{{ o.merchantName }}</p>
-    
-    <p style=" margin: 0;
-      font-size: 14px;
-      color: #94a3b8;">{{ o.discount }}% OFF</p>
-
-    <p style="margin: 0; font-size: 14px; color: #94a3b8;">
-      Available:
-      <span *ngFor="let day of o.availability; let last = last">
-        {{ day | titlecase }}<span *ngIf="!last">, </span>
-      </span>
-    </p>
-
-    <p style="margin: 0; font-size: 14px; color: #94a3b8;">
-      Usage: {{ o.usageLimit }}
-    </p>
-
-    <span style="display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-    
-      background: #374151;
-      color: #e5e7eb;
-      width: fit-content;" class="badge">{{ o.status }}</span>
-
-    <button (click)="toggle(o)" [style.background]="o.status === 'active' ? '#3b82f6' : '#6b7280'" style="
-    margin-top: 6px;
-    padding: 8px;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  ">
-      {{ o.status === 'active' ? 'pause' : 'activate' }}
-    </button>
-
+  <div class="stats">
+    <span class="stat-pill live"><strong>{{ activeOffersCount }}</strong> live</span>
+    <span class="stat-pill paused"><strong>{{ inactiveOffersCount }}</strong> paused</span>
+    <span class="stat-pill total"><strong>{{ offers.length }}</strong> total</span>
   </div>
 
+  <div class="filters">
+    <button
+      class="filter-btn"
+      [class.active]="filter === 'all'"
+      (click)="filter = 'all'"
+    >All</button>
+    <button
+      class="filter-btn"
+      [class.active]="filter === 'active'"
+      (click)="filter = 'active'"
+    >Live</button>
+    <button
+      class="filter-btn"
+      [class.active]="filter === 'inactive'"
+      (click)="filter = 'inactive'"
+    >Paused</button>
+  </div>
+</div>
+
+<div class="state-message" *ngIf="loading">Loading offers…</div>
+
+<div class="state-message error" *ngIf="loadError">{{ loadError }}</div>
+
+<div class="state-message" *ngIf="!loading && !loadError && offers.length === 0">
+  No offers yet — create your first one using the form.
+</div>
+
+<div class="state-message" *ngIf="!loading && !loadError && offers.length > 0 && filteredOffers.length === 0">
+  No {{ filter === 'active' ? 'live' : 'paused' }} offers.
+</div>
+
+<div class="offers-grid" *ngIf="!loading && filteredOffers.length > 0">
+  <article
+    class="offer-card"
+    [class.inactive]="o.status === 'inactive'"
+    *ngFor="let o of filteredOffers"
+  >
+    <div class="image-wrap" *ngIf="o.image">
+      <img class="offer-image" [src]="o.image" [alt]="o.title" />
+      <span class="discount-ribbon">{{ o.discount }}% OFF</span>
+    </div>
+    <div class="image-wrap placeholder" *ngIf="!o.image">
+      No image
+      <span class="discount-ribbon">{{ o.discount }}% OFF</span>
+    </div>
+
+    <div class="card-body">
+      <span class="category-tag">{{ formatCategory(o.category) }}</span>
+      <h3 class="offer-title">{{ o.title }}</h3>
+      <p class="merchant">{{ o.merchantName }}</p>
+      <p class="description">{{ o.description }}</p>
+
+      <p class="meta" *ngIf="o.availability?.length">
+        {{ o.availability.length }} day{{ o.availability.length > 1 ? 's' : '' }}/week
+        · {{ o.usageLimit || 'no limit' }}
+      </p>
+    </div>
+
+    <div class="card-footer">
+      <span
+        class="status-badge"
+        [class.active]="o.status === 'active'"
+        [class.inactive]="o.status === 'inactive'"
+      >
+        {{ o.status === 'active' ? 'Live' : 'Paused' }}
+      </span>
+
+      <button
+        class="toggle-btn"
+        [class.live]="o.status === 'active'"
+        [class.paused]="o.status === 'inactive'"
+        (click)="toggle(o)"
+      >
+        {{ o.status === 'active' ? 'Pause' : 'Go live' }}
+      </button>
+    </div>
+  </article>
 </div>

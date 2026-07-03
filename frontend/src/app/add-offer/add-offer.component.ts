@@ -19,7 +19,7 @@ export class AddOfferComponent {
   description = '';
   category = '';
   merchantName = '';
-  discount = 0;
+  discount: number | null = null;
   outlets = '';
   termsAndConditions = '';
   offerType = '';
@@ -45,7 +45,7 @@ export class AddOfferComponent {
     this.description = '';
     this.merchantName = '';
     this.category = '';
-    this.discount = 0;
+    this.discount = null;
     this.outlets = '';
     this.termsAndConditions = '';
     this.offerType = '';
@@ -80,15 +80,38 @@ export class AddOfferComponent {
 
     reader.readAsDataURL(file);
   }
+  isDiscountMissing(): boolean {
+    return this.discount === null || this.discount === undefined;
+  }
+
+  isDiscountOutOfRange(): boolean {
+    return !this.isDiscountMissing() && (this.discount! < 0 || this.discount! > 100);
+  }
+
   addOffer() {
     this.submitted = true;
+    this.backendError = '';
+
+    if (
+      !this.title ||
+      !this.description ||
+      !this.merchantName ||
+      !this.category ||
+      this.isDiscountMissing() ||
+      this.isDiscountOutOfRange() ||
+      !this.outlets ||
+      !this.termsAndConditions ||
+      !this.offerType
+    ) {
+      return;
+    }
 
     const payload = {
       title: this.title,
       description: this.description,
       merchantName: this.merchantName,
       category: this.category,
-      discount: this.discount !== null ? Number(this.discount) : null,
+      discount: Number(this.discount),
       outlets: this.outlets.split(',').map((x) => x.trim()),
       termsAndConditions: this.termsAndConditions,
       offerType: this.offerType,

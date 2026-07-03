@@ -1,85 +1,142 @@
-<div class="error-box" *ngIf="backendError">
-  {{ backendError }}
-</div>
+<div class="error-box" *ngIf="backendError">{{ backendError }}</div>
+
 <div class="card">
-
-  <h2>Add Offer</h2>
-
-  <input placeholder="Title" [(ngModel)]="title">
-  <div class="error" *ngIf="submitted && !title">Required</div>
-
-  <textarea placeholder="Description" [(ngModel)]="description"></textarea>
-  <div class="error" *ngIf="submitted && !description">Required</div>
-
-  <input placeholder="Merchant Name" [(ngModel)]="merchantName">
-  <div class="error" *ngIf="submitted && !merchantName">Required</div>
-
-  <select [(ngModel)]="category">
-    <option value="" disabled selected>Select a category</option>
-    <option value="food_drink">Food & Drink</option>
-    <option value="fashion">Fashion</option>
-    <option value="kids">Kids</option>
-    <option value="sports_fitness">Sports & Fitness</option>
-    <option value="health">Health</option>
-    <option value="entertainment">Entertainment</option>
-    <option value="jewellery">Jewellery</option>
-    <option value="watches">Watches</option>
-    <option value="beauty">Beauty</option>
-    <option value="home">Home</option>
-    <option value="artists">Artists</option>
-    <option value="weddings">Weddings</option>
-    <option value="toys">Toys</option>
-    <option value="gifts">Gifts</option>
-    <option value="travel">Travel</option>
-    <option value="electronics">Electronics</option>
-    <option value="online_shopping">Online Shopping</option>
-    <option value="property_market">Property Market</option>
-    <option value="automotive">Automotive</option>
-
-  </select>
-  <div class="error" *ngIf="submitted && !category">Required</div>
-
-  <input type="number" placeholder="Discount" [(ngModel)]="discount">
-  <div class="error" *ngIf="submitted && !discount">Required</div>
-
-  <input placeholder="Outlets" [(ngModel)]="outlets">
-  <div class="error" *ngIf="submitted && !outlets">Required</div>
-
-  <textarea placeholder="Terms and Conditions" [(ngModel)]="termsAndConditions"></textarea>
-  <div class="error" *ngIf="submitted && !termsAndConditions">Required</div>
-
-  <select [(ngModel)]="offerType">
-    <option value="" disabled selected>Select your offer type</option>
-    <option value="basic">Basic</option>
-    <option value="premium">Premium</option>
-  </select>
-  <label>Availability</label>
-  <div class="days-box">
-    <label class="day-item" *ngFor="let day of days">
-      <input type="checkbox" [value]="day" (change)="toggleDay(day, $event)" [checked]="availability.includes(day)" />
-      <span>{{ day | titlecase }}</span>
-    </label>
+  <div class="card-header">
+    <h2>New Offer</h2>
+    <p>Fill in the details consumers will see in the app</p>
   </div>
-  <select [(ngModel)]="usageLimit">
-    <option value="" disabled selected>Usage limit for an offer</option>
-    <option value="unlimited">Unlimited</option>
-    <option value="once">Once</option>
-    <option value="twice">Twice</option>
-    <option value="week">Week</option>
-    <option value="month">Month</option>
-    <option value="year">Year</option>
-  </select>
-  <div class="error" *ngIf="submitted && !offerType">Required</div>
-  <label>Start Date</label>
-  <input type="date" placeholder="start date" [(ngModel)]="startDate" [min]="today">
-  <div class="error" *ngIf="submitted && !startDate">Required</div>
 
-  <label>End Date</label>
-  <input type="date" placeholder="end date" [(ngModel)]="endDate" [min]="startDate || today">
-  <div class="error" *ngIf="submitted && !endDate">Required</div>
-  <label>Image</label>
+  <div class="form-section">
+    <h3 class="section-title">Basics</h3>
 
-  <input type="text" placeholder="Image URL" [(ngModel)]="image" />
-  <button (click)="addOffer()">Add Offer</button>
+    <div class="field">
+      <label>Title</label>
+      <input placeholder="e.g. 23% Off Summer Special" [(ngModel)]="title" />
+      <div class="error" *ngIf="submitted && !title">Required</div>
+    </div>
 
+    <div class="field">
+      <label>Description</label>
+      <textarea rows="3" placeholder="What does the customer get?" [(ngModel)]="description"></textarea>
+      <div class="error" *ngIf="submitted && !description">Required</div>
+    </div>
+
+    <div class="field">
+      <label>Merchant</label>
+      <input placeholder="Business name" [(ngModel)]="merchantName" />
+      <div class="error" *ngIf="submitted && !merchantName">Required</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Category</label>
+        <select [(ngModel)]="category">
+          <option value="" disabled selected>Select category</option>
+          <option value="food_drink">Food & Drink</option>
+          <option value="fashion">Fashion</option>
+          <option value="kids">Kids</option>
+          <option value="sports_fitness">Sports & Fitness</option>
+          <option value="health">Health</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="jewellery">Jewellery</option>
+          <option value="watches">Watches</option>
+          <option value="beauty">Beauty</option>
+          <option value="home">Home</option>
+          <option value="artists">Artists</option>
+          <option value="weddings">Weddings</option>
+          <option value="toys">Toys</option>
+          <option value="gifts">Gifts</option>
+          <option value="travel">Travel</option>
+          <option value="electronics">Electronics</option>
+          <option value="online_shopping">Online Shopping</option>
+          <option value="property_market">Property Market</option>
+          <option value="automotive">Automotive</option>
+        </select>
+        <div class="error" *ngIf="submitted && !category">Required</div>
+      </div>
+
+      <div class="field">
+        <label>Discount %</label>
+        <input type="number" placeholder="0–100" [(ngModel)]="discount" min="0" max="100" />
+        <div class="error" *ngIf="submitted && isDiscountMissing()">Required</div>
+        <div class="error" *ngIf="submitted && isDiscountOutOfRange()">0–100 only</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h3 class="section-title">Details</h3>
+
+    <div class="field">
+      <label>Outlets</label>
+      <input placeholder="Comma-separated store names" [(ngModel)]="outlets" />
+      <div class="error" *ngIf="submitted && !outlets">Required</div>
+    </div>
+
+    <div class="field">
+      <label>Terms & Conditions</label>
+      <textarea rows="2" placeholder="Restrictions, exclusions…" [(ngModel)]="termsAndConditions"></textarea>
+      <div class="error" *ngIf="submitted && !termsAndConditions">Required</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Offer type</label>
+        <select [(ngModel)]="offerType">
+          <option value="" disabled selected>Select type</option>
+          <option value="basic">Basic</option>
+          <option value="premium">Premium</option>
+        </select>
+        <div class="error" *ngIf="submitted && !offerType">Required</div>
+      </div>
+
+      <div class="field">
+        <label>Usage limit</label>
+        <select [(ngModel)]="usageLimit">
+          <option value="" disabled selected>Select limit</option>
+          <option value="unlimited">Unlimited</option>
+          <option value="once">Once</option>
+          <option value="twice">Twice</option>
+          <option value="week">Per week</option>
+          <option value="month">Per month</option>
+          <option value="year">Per year</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Available days</label>
+      <div class="days-box">
+        <label class="day-item" *ngFor="let day of days" [class.selected]="availability.includes(day)">
+          <input type="checkbox" [value]="day" (change)="toggleDay(day, $event)" [checked]="availability.includes(day)" />
+          <span>{{ day | titlecase }}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h3 class="section-title">Schedule & media</h3>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Start date</label>
+        <input type="date" [(ngModel)]="startDate" [min]="today" />
+        <div class="error" *ngIf="submitted && !startDate">Required</div>
+      </div>
+
+      <div class="field">
+        <label>End date</label>
+        <input type="date" [(ngModel)]="endDate" [min]="startDate || today" />
+        <div class="error" *ngIf="submitted && !endDate">Required</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Image URL</label>
+      <input type="text" placeholder="https://…" [(ngModel)]="image" />
+    </div>
+  </div>
+
+  <button class="submit-btn" type="button" (click)="addOffer()">Publish offer</button>
 </div>

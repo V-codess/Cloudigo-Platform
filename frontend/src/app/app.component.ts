@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { AddOfferComponent } from './add-offer/add-offer.component';
 import { OffersListComponent } from './offers-list/offers-list.component';
 
@@ -7,6 +7,22 @@ import { OffersListComponent } from './offers-list/offers-list.component';
   standalone: true,
   imports: [AddOfferComponent, OffersListComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
-export class AppComponent {}
+export class AppComponent {
+  activeTab: 'add' | 'list' = 'list';
+
+  @ViewChild('list') list!: OffersListComponent;
+
+  setTab(tab: 'add' | 'list') {
+    this.activeTab = tab;
+    if (tab === 'list') {
+      this.list?.refresh();
+    }
+  }
+
+  onOfferAdded() {
+    this.list?.refresh();
+    this.activeTab = 'list';
+  }
+}
