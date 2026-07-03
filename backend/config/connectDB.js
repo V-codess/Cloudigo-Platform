@@ -5,10 +5,11 @@ const connectDB = async () => {
   try {
     const url = process.env.URL || "";
     if (!url) {
-      const memoryServer = await MongoMemoryServer.create();
-      mongoUri = memoryServer.getUri();
-      console.log("Using in-memory MongoDB");
-    }
+      const mongoServer = await MongoMemoryServer.create();
+      const memoryUri = mongoServer.getUri();
+      await mongoose.connect(memoryUri);
+      console.log("Connected to in-memory MongoDB");
+    } 
     await mongoose.connect(url);
     console.log("Database connected");
   } catch (err) {
