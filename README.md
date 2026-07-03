@@ -86,29 +86,28 @@ POST /api/offers
 Example body:
 
 ```json
-     {
-        title: "50% Weekend Fashion Blast",
-        description: "Exclusive weekend discount on premium fashion wear.",
-        image: "https://images.pexels.com/photos/29906028/pexels-photo-29906028.jpeg",
-        category: "fashion",
-        merchantName: "Urban Wear Co",
-        discount: 50,
-        outlets: [
-          "Valletta Shopping Centre",
-          "Sliema Retail Hub"
-        ],
-        termsAndConditions:
-          "Weekend only offer. Cannot be combined with other promotions.",
-        availability: [
-          "saturday",
-          "sunday"
-        ],
-        status: "active",
-        offerType: "premium",
-        usageLimit: "week",
-        startDate: new Date("2026-07-05"),
-        endDate: new Date("2026-08-05")
-      },
+{
+   "title":"50% Weekend Fashion Blast",
+   "description":"Exclusive weekend discount on premium fashion wear.",
+   "image":"https://images.pexels.com/photos/29906028/pexels-photo-29906028.jpeg",
+   "category":"fashion",
+   "merchantName":"Urban Wear Co",
+   "discount":50,
+   "outlets":[
+      "Valletta Shopping Centre",
+      "Sliema Retail Hub"
+   ],
+   "termsAndConditions":"Weekend only offer. Cannot be combined with other promotions.",
+   "availability":[
+      "saturday",
+      "sunday"
+   ],
+   "status":"active",
+   "offerType":"premium",
+   "usageLimit":"week",
+   "startDate":"new Date(""2026-07-05"")",
+   "endDate":"new Date(""2026-08-05"")"
+}
 ```
 
 ### Toggle offer status

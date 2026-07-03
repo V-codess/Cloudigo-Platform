@@ -8,24 +8,11 @@
   </div>
 
   <div class="filters">
-    <button
-      type="button"
-      class="filter-btn"
-      [class.active]="filter === 'all'"
-      (click)="setFilter('all')"
-    >All</button>
-    <button
-      type="button"
-      class="filter-btn"
-      [class.active]="filter === 'active'"
-      (click)="setFilter('active')"
-    >Live</button>
-    <button
-      type="button"
-      class="filter-btn"
-      [class.active]="filter === 'inactive'"
-      (click)="setFilter('inactive')"
-    >Paused</button>
+    <button type="button" class="filter-btn" [class.active]="filter === 'all'" (click)="setFilter('all')">All</button>
+    <button type="button" class="filter-btn" [class.active]="filter === 'active'"
+      (click)="setFilter('active')">Live</button>
+    <button type="button" class="filter-btn" [class.active]="filter === 'inactive'"
+      (click)="setFilter('inactive')">Paused</button>
   </div>
 </div>
 
@@ -42,11 +29,7 @@
 </div>
 
 <div class="offers-grid" *ngIf="!loading && offers.length > 0">
-  <article
-    class="offer-card"
-    [class.inactive]="o.status === 'inactive'"
-    *ngFor="let o of offers"
-  >
+  <article class="offer-card" [class.inactive]="o.status === 'inactive'" *ngFor="let o of offers">
     <div class="image-wrap" *ngIf="o.image">
       <img class="offer-image" [src]="o.image" [alt]="o.title" />
       <span class="discount-ribbon">{{ o.discount }}% OFF</span>
@@ -61,7 +44,14 @@
       <h3 class="offer-title">{{ o.title }}</h3>
       <p class="merchant">{{ o.merchantName }}</p>
       <p class="description">{{ o.description }}</p>
-
+        <div *ngIf="o.outlets?.length">
+          <p><strong>Offer available at these locations</strong></p>
+          <ul>
+            <li *ngFor="let outlet of o.outlets">
+              {{ outlet }}
+            </li>
+          </ul>
+        </div>
       <p class="meta availability" *ngIf="o.availability?.length || o.usageLimit">
         <span *ngIf="o.availability?.length">{{ formatAvailability(o.availability) }}</span>
         <span *ngIf="o.availability?.length && o.usageLimit"> · </span>
@@ -70,21 +60,12 @@
     </div>
 
     <div class="card-footer">
-      <span
-        class="status-badge"
-        [class.active]="o.status === 'active'"
-        [class.inactive]="o.status === 'inactive'"
-      >
+      <span class="status-badge" [class.active]="o.status === 'active'" [class.inactive]="o.status === 'inactive'">
         {{ o.status === 'active' ? 'Live' : 'Paused' }}
       </span>
 
-      <button
-        type="button"
-        class="toggle-btn"
-        [class.live]="o.status === 'active'"
-        [class.paused]="o.status === 'inactive'"
-        (click)="toggle(o)"
-      >
+      <button type="button" class="toggle-btn" [class.live]="o.status === 'active'"
+        [class.paused]="o.status === 'inactive'" (click)="toggle(o)">
         {{ o.status === 'active' ? 'Pause' : 'Go live' }}
       </button>
     </div>
@@ -92,33 +73,19 @@
 </div>
 
 <nav class="pagination" *ngIf="!loading && totalPages > 1" aria-label="Offers pagination">
-  <button
-    type="button"
-    class="page-btn nav-btn"
-    [disabled]="currentPage === 1"
-    (click)="goToPage(currentPage - 1)"
-  >
+  <button type="button" class="page-btn nav-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
     ← Prev
   </button>
 
   <div class="page-numbers">
-    <button
-      type="button"
-      class="page-btn"
-      *ngFor="let page of pageNumbers"
-      [class.active]="page === currentPage"
-      (click)="goToPage(page)"
-    >
+    <button type="button" class="page-btn" *ngFor="let page of pageNumbers" [class.active]="page === currentPage"
+      (click)="goToPage(page)">
       {{ page }}
     </button>
   </div>
 
-  <button
-    type="button"
-    class="page-btn nav-btn"
-    [disabled]="currentPage === totalPages"
-    (click)="goToPage(currentPage + 1)"
-  >
+  <button type="button" class="page-btn nav-btn" [disabled]="currentPage === totalPages"
+    (click)="goToPage(currentPage + 1)">
     Next →
   </button>
 
