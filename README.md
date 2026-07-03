@@ -67,20 +67,6 @@ Frontend connects to:
 http://localhost:4200
 ```
 
-If needed, update it here:
-
-```
-frontend/src/environments/environment.ts
-```
-
-Example:
-
-```ts
-export const environment = {
-  apiUrl: 'http://localhost:3000/api'
-};
-```
-
 ---
 
 ## API Endpoints
