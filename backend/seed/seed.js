@@ -13,7 +13,7 @@ const seedOffers = async () => {
       {
         title: "23% Off Summer Special",
         description: "Get discount on all summer collection items including apparel, accessories, and more.",
-        image: "https://example.com/images/summer-offer.jpg",
+        image: "https://images.pexels.com/photos/15160252/pexels-photo-15160252.jpeg",
         category: "fashion",
         merchantName: "SunStyle Boutique",
         discount: 23,
@@ -40,7 +40,7 @@ const seedOffers = async () => {
       {
         title: "50% Weekend Fashion Blast",
         description: "Exclusive weekend discount on premium fashion wear.",
-        image: "https://example.com/images/weekend-fashion.jpg",
+        image: "https://images.pexels.com/photos/29906028/pexels-photo-29906028.jpeg",
         category: "fashion",
         merchantName: "Urban Wear Co",
         discount: 50,
@@ -64,7 +64,7 @@ const seedOffers = async () => {
       {
         title: "15% Beauty Essentials Deal",
         description: "Save on skincare and beauty products across all outlets.",
-        image: "https://example.com/images/beauty-offer.jpg",
+        image: "https://images.pexels.com/photos/4735904/pexels-photo-4735904.jpeg",
         category: "beauty",
         merchantName: "GlowUp Store",
         discount: 15,
