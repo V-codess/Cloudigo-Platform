@@ -65,14 +65,6 @@ const offerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-offerSchema.pre("save", function () {
-  if (this.startDate && this.endDate) {
-    if (this.startDate > this.endDate) {
-      throw new Error("startDate must be before endDate");
-    }
-  }
-});
-
 offerSchema.set('toJSON', {
     virtuals: true,
     versionKey: false,

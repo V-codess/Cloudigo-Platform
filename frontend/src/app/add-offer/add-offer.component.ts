@@ -40,6 +40,15 @@ export class AddOfferComponent {
   ];
   today: string = new Date().toISOString().split('T')[0];
   constructor(private service: OfferService) {}
+
+  openDatePicker(input: HTMLInputElement) {
+    try {
+      input.showPicker?.();
+    } catch {
+      input.focus();
+    }
+  }
+
   resetForm() {
     this.title = '';
     this.description = '';
@@ -68,14 +77,28 @@ export class AddOfferComponent {
     }
   }
   onImageSelect(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
 
     if (!file) return;
 
+    if (!file.type.startsWith('image/')) {
+      this.backendError = 'Please select an image file.';
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.backendError = 'Image must be 5 MB or smaller.';
+      input.value = '';
+      return;
+    }
+
+    this.backendError = '';
     const reader = new FileReader();
 
     reader.onload = () => {
-      this.image = reader.result as string; // base64 string
+      this.image = reader.result as string;
     };
 
     reader.readAsDataURL(file);
@@ -88,39 +111,56 @@ export class AddOfferComponent {
     return !this.isDiscountMissing() && (this.discount! < 0 || this.discount! > 100);
   }
 
+  isEndDateBeforeStart(): boolean {
+    return !!(this.startDate && this.endDate && this.endDate < this.startDate);
+  }
+
+  get parsedOutlets(): string[] {
+    return this.outlets.split(',').map((x) => x.trim()).filter(Boolean);
+  }
+
+  isOutletsMissing(): boolean {
+    return this.parsedOutlets.length === 0;
+  }
+
   addOffer() {
     this.submitted = true;
     this.backendError = '';
 
     if (
-      !this.title ||
-      !this.description ||
-      !this.merchantName ||
+      !this.title.trim() ||
+      !this.description.trim() ||
+      !this.merchantName.trim() ||
       !this.category ||
       this.isDiscountMissing() ||
       this.isDiscountOutOfRange() ||
-      !this.outlets ||
-      !this.termsAndConditions ||
-      !this.offerType
+      this.isOutletsMissing() ||
+      !this.termsAndConditions.trim() ||
+      !this.offerType ||
+      !this.startDate ||
+      !this.endDate ||
+      this.isEndDateBeforeStart()
     ) {
       return;
     }
 
-    const payload = {
-      title: this.title,
-      description: this.description,
-      merchantName: this.merchantName,
+    const payload: Record<string, unknown> = {
+      title: this.title.trim(),
+      description: this.description.trim(),
+      merchantName: this.merchantName.trim(),
       category: this.category,
       discount: Number(this.discount),
-      outlets: this.outlets.split(',').map((x) => x.trim()),
-      termsAndConditions: this.termsAndConditions,
+      outlets: this.parsedOutlets,
+      termsAndConditions: this.termsAndConditions.trim(),
       offerType: this.offerType,
       startDate: this.startDate,
       endDate: this.endDate,
-      image: this.image,
-      usageLimit: this.usageLimit,
-      availability: this.availability
     };
+
+    if (this.availability.length) payload['availability'] = this.availability;
+
+    if (this.image) payload['image'] = this.image;
+    if (this.usageLimit) payload['usageLimit'] = this.usageLimit;
 
     this.service.addOffer(payload).subscribe({
       next: () => {
@@ -129,7 +169,8 @@ export class AddOfferComponent {
         this.submitted = false;
       },
       error: (err) => {
-        this.backendError = err?.error?.message || 'Something went wrong';
+        const body = err?.error;
+        this.backendError = body?.message || body?.error || 'Something went wrong';
       },
     });
   }

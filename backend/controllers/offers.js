@@ -2,24 +2,41 @@ const Offers = require("../model/offerSchema");
 
 const getAllOffers = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 6, 1), 50);
+    const status = req.query.status;
+
+    if (status && status !== "active" && status !== "inactive") {
+      return res.status(400).json({
+        message: "Status filter must be active or inactive",
+      });
+    }
 
     const skip = (page - 1) * limit;
 
-    const totalOffers = await Offers.countDocuments();
+    const filter = {};
+    if (status === "active" || status === "inactive") {
+      filter.status = status;
+    }
 
-    const offers = await Offers.find()
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
+    const [totalOffers, activeCount, inactiveCount, offers] = await Promise.all([
+      Offers.countDocuments(filter),
+      Offers.countDocuments({ status: "active" }),
+      Offers.countDocuments({ status: "inactive" }),
+      Offers.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 }),
+    ]);
 
     return res.status(200).json({
       message: "Offers fetched successfully",
       pagination: {
         totalOffers,
+        activeCount,
+        inactiveCount,
         currentPage: page,
-        totalPages: Math.ceil(totalOffers / limit),
+        totalPages: Math.ceil(totalOffers / limit) || 1,
         pageSize: limit,
       },
       data: offers,
@@ -75,7 +92,7 @@ const postAnOffer = async (req, res) => {
       availability,
       status,
       offerType,
-      usageLimit,
+      ...(usageLimit ? { usageLimit } : {}),
       startDate,
       endDate,
     });

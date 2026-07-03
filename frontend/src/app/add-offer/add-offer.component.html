@@ -12,19 +12,19 @@
     <div class="field">
       <label>Title</label>
       <input placeholder="e.g. 23% Off Summer Special" [(ngModel)]="title" />
-      <div class="error" *ngIf="submitted && !title">Required</div>
+      <div class="error" *ngIf="submitted && !title.trim()">Required</div>
     </div>
 
     <div class="field">
       <label>Description</label>
       <textarea rows="3" placeholder="What does the customer get?" [(ngModel)]="description"></textarea>
-      <div class="error" *ngIf="submitted && !description">Required</div>
+      <div class="error" *ngIf="submitted && !description.trim()">Required</div>
     </div>
 
     <div class="field">
       <label>Merchant</label>
       <input placeholder="Business name" [(ngModel)]="merchantName" />
-      <div class="error" *ngIf="submitted && !merchantName">Required</div>
+      <div class="error" *ngIf="submitted && !merchantName.trim()">Required</div>
     </div>
 
     <div class="field-row">
@@ -70,13 +70,13 @@
     <div class="field">
       <label>Outlets</label>
       <input placeholder="Comma-separated store names" [(ngModel)]="outlets" />
-      <div class="error" *ngIf="submitted && !outlets">Required</div>
+      <div class="error" *ngIf="submitted && isOutletsMissing()">Required</div>
     </div>
 
     <div class="field">
       <label>Terms & Conditions</label>
       <textarea rows="2" placeholder="Restrictions, exclusions…" [(ngModel)]="termsAndConditions"></textarea>
-      <div class="error" *ngIf="submitted && !termsAndConditions">Required</div>
+      <div class="error" *ngIf="submitted && !termsAndConditions.trim()">Required</div>
     </div>
 
     <div class="field-row">
@@ -121,20 +121,40 @@
     <div class="field-row">
       <div class="field">
         <label>Start date</label>
-        <input type="date" [(ngModel)]="startDate" [min]="today" />
+        <div class="date-input-wrap" (click)="openDatePicker(startDateInput)">
+          <input
+            #startDateInput
+            type="date"
+            [(ngModel)]="startDate"
+            [min]="today"
+            (click)="openDatePicker(startDateInput); $event.stopPropagation()"
+          />
+        </div>
         <div class="error" *ngIf="submitted && !startDate">Required</div>
       </div>
 
       <div class="field">
         <label>End date</label>
-        <input type="date" [(ngModel)]="endDate" [min]="startDate || today" />
+        <div class="date-input-wrap" (click)="openDatePicker(endDateInput)">
+          <input
+            #endDateInput
+            type="date"
+            [(ngModel)]="endDate"
+            [min]="startDate || today"
+            (click)="openDatePicker(endDateInput); $event.stopPropagation()"
+          />
+        </div>
         <div class="error" *ngIf="submitted && !endDate">Required</div>
+        <div class="error" *ngIf="submitted && startDate && endDate && isEndDateBeforeStart()">End date must be after start date</div>
       </div>
     </div>
 
     <div class="field">
-      <label>Image URL</label>
+      <label>Image</label>
+      <input type="file" accept="image/*" (change)="onImageSelect($event)" />
+      <span class="field-hint">Or paste a URL below</span>
       <input type="text" placeholder="https://…" [(ngModel)]="image" />
+      <img *ngIf="image" class="image-preview" [src]="image" alt="Preview" />
     </div>
   </div>
 

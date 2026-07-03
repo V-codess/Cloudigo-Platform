@@ -101,6 +101,25 @@ textarea::placeholder {
   color: #5c6578;
 }
 
+input[type="date"] {
+  cursor: pointer;
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.9);
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+.date-input-wrap {
+  cursor: pointer;
+}
+
+.date-input-wrap input[type="date"] {
+  width: 100%;
+}
+
 .days-box {
   display: flex;
   flex-wrap: wrap;
@@ -150,6 +169,23 @@ textarea::placeholder {
   color: #fca5a5;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-normal);
+}
+
+.field-hint {
+  display: block;
+  margin: 8px 0 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.image-preview {
+  display: block;
+  margin-top: 10px;
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border);
 }
 
 .submit-btn {

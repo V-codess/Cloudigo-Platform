@@ -1,5 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+
+export interface OffersResponse {
+  message: string;
+  pagination: {
+    totalOffers: number;
+    activeCount: number;
+    inactiveCount: number;
+    currentPage: number;
+    totalPages: number;
+    pageSize: number;
+  };
+  data: any[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class OfferService {
@@ -8,8 +21,16 @@ export class OfferService {
 
   constructor(private http: HttpClient) {}
 
-  getOffers() {
-    return this.http.get<any>(this.api);
+  getOffers(page = 1, limit = 6, status?: 'active' | 'inactive') {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('limit', limit);
+
+    if (status) {
+      params = params.set('status', status);
+    }
+
+    return this.http.get<OffersResponse>(this.api, { params });
   }
 
   addOffer(offer: any) {

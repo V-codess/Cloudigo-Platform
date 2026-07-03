@@ -22,7 +22,10 @@ export class AppComponent {
   }
 
   onOfferAdded() {
-    this.list?.refresh();
+    if (this.list) {
+      this.list.currentPage = 1;
+      this.list.refresh();
+    }
     this.activeTab = 'list';
   }
 }

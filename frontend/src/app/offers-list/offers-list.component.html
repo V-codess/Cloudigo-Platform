@@ -4,24 +4,27 @@
   <div class="stats">
     <span class="stat-pill live"><strong>{{ activeOffersCount }}</strong> live</span>
     <span class="stat-pill paused"><strong>{{ inactiveOffersCount }}</strong> paused</span>
-    <span class="stat-pill total"><strong>{{ offers.length }}</strong> total</span>
+    <span class="stat-pill total"><strong>{{ activeOffersCount + inactiveOffersCount }}</strong> total</span>
   </div>
 
   <div class="filters">
     <button
+      type="button"
       class="filter-btn"
       [class.active]="filter === 'all'"
-      (click)="filter = 'all'"
+      (click)="setFilter('all')"
     >All</button>
     <button
+      type="button"
       class="filter-btn"
       [class.active]="filter === 'active'"
-      (click)="filter = 'active'"
+      (click)="setFilter('active')"
     >Live</button>
     <button
+      type="button"
       class="filter-btn"
       [class.active]="filter === 'inactive'"
-      (click)="filter = 'inactive'"
+      (click)="setFilter('inactive')"
     >Paused</button>
   </div>
 </div>
@@ -30,19 +33,19 @@
 
 <div class="state-message error" *ngIf="loadError">{{ loadError }}</div>
 
-<div class="state-message" *ngIf="!loading && !loadError && offers.length === 0">
+<div class="state-message" *ngIf="!loading && !loadError && totalOffers === 0 && filter === 'all'">
   No offers yet — create your first one using the form.
 </div>
 
-<div class="state-message" *ngIf="!loading && !loadError && offers.length > 0 && filteredOffers.length === 0">
+<div class="state-message" *ngIf="!loading && !loadError && totalOffers === 0 && filter !== 'all'">
   No {{ filter === 'active' ? 'live' : 'paused' }} offers.
 </div>
 
-<div class="offers-grid" *ngIf="!loading && filteredOffers.length > 0">
+<div class="offers-grid" *ngIf="!loading && offers.length > 0">
   <article
     class="offer-card"
     [class.inactive]="o.status === 'inactive'"
-    *ngFor="let o of filteredOffers"
+    *ngFor="let o of offers"
   >
     <div class="image-wrap" *ngIf="o.image">
       <img class="offer-image" [src]="o.image" [alt]="o.title" />
@@ -59,9 +62,10 @@
       <p class="merchant">{{ o.merchantName }}</p>
       <p class="description">{{ o.description }}</p>
 
-      <p class="meta" *ngIf="o.availability?.length">
-        {{ o.availability.length }} day{{ o.availability.length > 1 ? 's' : '' }}/week
-        · {{ o.usageLimit || 'no limit' }}
+      <p class="meta availability" *ngIf="o.availability?.length || o.usageLimit">
+        <span *ngIf="o.availability?.length">{{ formatAvailability(o.availability) }}</span>
+        <span *ngIf="o.availability?.length && o.usageLimit"> · </span>
+        <span *ngIf="o.usageLimit">{{ formatUsageLimit(o.usageLimit) }}</span>
       </p>
     </div>
 
@@ -75,6 +79,7 @@
       </span>
 
       <button
+        type="button"
         class="toggle-btn"
         [class.live]="o.status === 'active'"
         [class.paused]="o.status === 'inactive'"
@@ -85,3 +90,37 @@
     </div>
   </article>
 </div>
+
+<nav class="pagination" *ngIf="!loading && totalPages > 1" aria-label="Offers pagination">
+  <button
+    type="button"
+    class="page-btn nav-btn"
+    [disabled]="currentPage === 1"
+    (click)="goToPage(currentPage - 1)"
+  >
+    ← Prev
+  </button>
+
+  <div class="page-numbers">
+    <button
+      type="button"
+      class="page-btn"
+      *ngFor="let page of pageNumbers"
+      [class.active]="page === currentPage"
+      (click)="goToPage(page)"
+    >
+      {{ page }}
+    </button>
+  </div>
+
+  <button
+    type="button"
+    class="page-btn nav-btn"
+    [disabled]="currentPage === totalPages"
+    (click)="goToPage(currentPage + 1)"
+  >
+    Next →
+  </button>
+
+  <span class="page-info">Page {{ currentPage }} of {{ totalPages }} · {{ totalOffers }} offers</span>
+</nav>
