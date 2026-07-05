@@ -96,6 +96,13 @@ select:focus {
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
+input.field-invalid,
+textarea.field-invalid,
+select.field-invalid {
+  border-color: #f87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+}
+
 input::placeholder,
 textarea::placeholder {
   color: #5c6578;
@@ -124,6 +131,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.days-box.field-invalid {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #f87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
 }
 
 .day-item {
@@ -169,6 +183,23 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: #fca5a5;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-normal);
+}
+
+.outlet-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.outlet-preview .outlet-tag {
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  color: #c4cad4;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  border-radius: 6px;
 }
 
 .field-hint {

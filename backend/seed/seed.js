@@ -169,23 +169,40 @@ const seedOffers = async () => {
 
     if (count === 0) {
       await Offers.insertMany(seedData);
-      console.log("Seed data inserted successfully");
+      console.log(`Seed data inserted successfully (${seedData.length} offers)`);
       return;
     }
 
+    let inserted = 0;
     let fixed = 0;
+
     for (const offer of seedData) {
+      const exists = await Offers.findOne({ title: offer.title });
+
+      if (!exists) {
+        await Offers.create(offer);
+        inserted += 1;
+        continue;
+      }
+
       const result = await Offers.updateOne(
-        { title: offer.title, $or: [{ image: { $exists: false } }, { image: null }, { image: "" }, { image: /example\.com/ }] },
+        {
+          title: offer.title,
+          $or: [{ image: { $exists: false } }, { image: null }, { image: "" }, { image: /example\.com/ }],
+        },
         { $set: { image: offer.image } }
       );
       if (result.modifiedCount > 0) fixed += 1;
     }
 
+    if (inserted > 0) {
+      console.log(`Added ${inserted} missing seed offer(s)`);
+    }
     if (fixed > 0) {
       console.log(`Fixed ${fixed} offer image URL(s)`);
-    } else {
-      console.log("Seed skipped: data already exists");
+    }
+    if (inserted === 0 && fixed === 0) {
+      console.log("Seed skipped: all seed offers already exist");
     }
   } catch (error) {
     console.error("Seed error:", error.message);

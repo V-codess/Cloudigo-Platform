@@ -64,7 +64,7 @@ http://localhost:4200
 Frontend connects to:
 
 ```
-http://localhost:4200
+http://localhost:8080/api/offers
 ```
 
 ---
@@ -77,6 +77,37 @@ http://localhost:4200
 GET /api/offers
 ```
 
+**Query parameters:**
+
+| Param | Default | Description |
+|-------|---------|-------------|
+| `page` | `1` | Page number (1-based) |
+| `limit` | `6` | Items per page (max 50) |
+| `status` | — | Filter by `active` or `inactive` |
+
+**Example:**
+
+```
+GET /api/offers?page=1&limit=6&status=active
+```
+
+**Response includes pagination:**
+
+```json
+{
+  "message": "Offers fetched successfully",
+  "pagination": {
+    "totalOffers": 10,
+    "activeCount": 10,
+    "inactiveCount": 0,
+    "currentPage": 1,
+    "totalPages": 2,
+    "pageSize": 6
+  },
+  "data": [ /* offer objects */ ]
+}
+```
+
 ### Create offer
 
 ```
@@ -87,7 +118,7 @@ Example body:
 
 ```json
 {
-   "title":"50% Weekend Fashion Blast",
+   "title":"New Weekend Fashion Blast",
    "description":"Exclusive weekend discount on premium fashion wear.",
    "image":"https://images.pexels.com/photos/29906028/pexels-photo-29906028.jpeg",
    "category":"fashion",
@@ -105,15 +136,32 @@ Example body:
    "status":"active",
    "offerType":"premium",
    "usageLimit":"week",
-   "startDate":"new Date(""2026-07-05"")",
-   "endDate":"new Date(""2026-08-05"")"
+   "startDate":"2026-07-05",
+   "endDate":"2026-08-05"
 }
 ```
+
+**Required fields:** `title`, `description`, `category`, `merchantName`, `discount`, `outlets`, `termsAndConditions`, `offerType`, `startDate`, `endDate`, `availability` (at least one weekday).
+
+**Optional fields:** `image`, `usageLimit`, `status` (defaults to `active`).
+
+**Common errors:**
+
+| Status | Message |
+|--------|---------|
+| `400` | Missing required fields, invalid category/type/dates, empty outlets, no availability days |
+| `409` | Offer already exists (same title + merchant) |
 
 ### Toggle offer status
 
 ```
 PATCH /api/offers/:id/status
+```
+
+**Body:**
+
+```json
+{ "status": "active" }
 ```
 
 Switches between:
@@ -133,15 +181,22 @@ Example `.env` (optional):
 
 ```env
 PORT=8080
+URL=mongodb://localhost:27017/cloudigo
 ```
+
+If `URL` is omitted, an in-memory MongoDB instance is used automatically.
 
 ---
 
 ## Seed Data
 
-If database is empty on startup, sample offers are automatically inserted so the UI is not empty.
+On startup, **10 sample offers** are seeded automatically:
 
-Note: In-memory DB resets on restart.
+* If the database is empty, all seed offers are inserted.
+* If some seed offers already exist (matched by title), only missing ones are added.
+* Stale or broken image URLs (e.g. `example.com`) are repaired on restart.
+
+Note: In-memory DB resets on restart, so seed runs again each time.
 
 ---
 
@@ -157,8 +212,10 @@ http://localhost:4200
 
 4. You can:
 
-* View offers
-* Add new offers
+* View offers with pagination (6 per page)
+* Filter by All / Live / Paused
+* Add new offers (client + server validation)
+* Upload an image or paste a URL
 * Toggle status (active/inactive)
 
 ---
@@ -226,12 +283,9 @@ Consumer apps typically display discounts as percentages rather than absolute va
 
 ### 6. Image
 
-`String (URL or file path)`
+`String (optional — URL or base64 from file upload)`
 
-Stores offer banner image.
-
-**Reasoning:**
-Images are required for visual engagement in consumer apps. Stored as URL/path instead of binary for scalability.
+Stores offer banner image. Optional in the API; cards show a placeholder when omitted.
 
 ---
 
@@ -248,12 +302,11 @@ An offer may apply to multiple physical stores, so an array provides flexibility
 
 ### 8. Availability
 
-`Array of weekdays`
+`Array of weekdays (required — at least one)`
 
-Example: ["monday", "friday"]
+Example: `["monday", "friday"]`
 
-**Reasoning:**
-Offers may only be valid on certain days. Array allows multiple selections and supports scheduling logic.
+Valid values: `monday` … `sunday`. At least one day must be selected when creating an offer.
 
 ---
 
@@ -279,10 +332,9 @@ Assumed internal tiering system where premium offers may have higher visibility 
 
 ### 11. Usage Limit
 
-`Enum: once | weekly | monthly | unlimited`
+`Enum (optional): unlimited, once, twice, week, month, year`
 
-**Reasoning:**
-Prevents abuse and models real-world promotional constraints.
+When omitted, the UI displays “No usage limit”.
 
 ---
 
@@ -304,11 +356,50 @@ Since the Cloudigo consumer app was the only reference, several assumptions were
 * Offers are modeled as marketing cards shown to end users
 * Status is simplified to active/inactive instead of multiple lifecycle states
 * Availability is represented as weekdays instead of time slots
-* Image handling is simplified to URL/file path storage
+* Image handling supports URL, file upload (base64), or file path storage
 * Outlet structure is simplified to strings instead of a relational model
 * Category values are fixed based on observed UI filters
 
 These decisions were made to balance simplicity and realism within the scope of the assignment.
+
+---
+
+## AI Tool Usage
+
+AI tools were used as a development aid during this project.
+
+### What I used AI for
+
+- Troubleshooting Angular and TypeScript errors.
+- Generating example seed data for testing.
+- Improving the UI with suggestions for styling and layout.
+- Reviewing and refining parts of the README documentation.
+- Suggesting alternative implementations for Angular components and templates.
+
+### What it produced
+
+The AI generated:
+- Sample MongoDB seed data.
+- Suggestions for Angular templates and component logic.
+- CSS styling ideas.
+- Debugging suggestions for Angular configuration issues.
+- Initial drafts of documentation sections.
+
+### What changes I made and why
+
+All AI-generated code and text were reviewed before being added to the project. I modified outputs to:
+- Match the project's existing architecture and coding style.
+- Use the application's actual MongoDB schema and API.
+- Simplify implementations where appropriate.
+- Remove unnecessary code and adjust naming conventions.
+- Correct category values and validation rules to match the backend schema.
+
+### AI Tools Used
+
+ChatGPT – Used for debugging Angular and TypeScript issues, generating example seed data, suggesting UI improvements, and reviewing documentation.
+Cursor AI – Used for code completion, refactoring suggestions, boilerplate generation, and improving development productivity.
+
+All submitted code was reviewed, understood, and tested before inclusion in the project.
 
 ---
 

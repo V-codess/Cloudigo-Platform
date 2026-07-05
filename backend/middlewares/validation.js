@@ -101,17 +101,16 @@ const validateOffer = (req, res, next) => {
       });
     }
 
-    if (availability !== undefined) {
-      if (!Array.isArray(availability)) {
-        return res.status(400).json({
-          message: "Availability must be an array",
-        });
-      }
-      if (availability.some((day) => !allowedDays.includes(day))) {
-        return res.status(400).json({
-          message: "Invalid availability day",
-        });
-      }
+    if (!availability || !Array.isArray(availability) || availability.length === 0) {
+      return res.status(400).json({
+        message: "Select at least one available day",
+      });
+    }
+
+    if (availability.some((day) => !allowedDays.includes(day))) {
+      return res.status(400).json({
+        message: "Invalid availability day",
+      });
     }
 
     next();

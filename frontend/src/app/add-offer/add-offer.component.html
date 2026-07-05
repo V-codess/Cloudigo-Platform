@@ -11,26 +11,26 @@
 
     <div class="field">
       <label>Title</label>
-      <input placeholder="e.g. 23% Off Summer Special" [(ngModel)]="title" />
-      <div class="error" *ngIf="submitted && !title.trim()">Required</div>
+      <input placeholder="e.g. 23% Off Summer Special" [(ngModel)]="title" (ngModelChange)="clearFieldError('title')" [class.field-invalid]="hasFieldError('title')" />
+      <div class="error" *ngIf="fieldError('title')">{{ fieldError('title') }}</div>
     </div>
 
     <div class="field">
       <label>Description</label>
-      <textarea rows="3" placeholder="What does the customer get?" [(ngModel)]="description"></textarea>
-      <div class="error" *ngIf="submitted && !description.trim()">Required</div>
+      <textarea rows="3" placeholder="What does the customer get?" [(ngModel)]="description" (ngModelChange)="clearFieldError('description')" [class.field-invalid]="hasFieldError('description')"></textarea>
+      <div class="error" *ngIf="fieldError('description')">{{ fieldError('description') }}</div>
     </div>
 
     <div class="field">
       <label>Merchant</label>
-      <input placeholder="Business name" [(ngModel)]="merchantName" />
-      <div class="error" *ngIf="submitted && !merchantName.trim()">Required</div>
+      <input placeholder="Business name" [(ngModel)]="merchantName" (ngModelChange)="clearFieldError('merchantName')" [class.field-invalid]="hasFieldError('merchantName')" />
+      <div class="error" *ngIf="fieldError('merchantName')">{{ fieldError('merchantName') }}</div>
     </div>
 
     <div class="field-row">
       <div class="field">
         <label>Category</label>
-        <select [(ngModel)]="category">
+        <select [(ngModel)]="category" (ngModelChange)="clearFieldError('category')" [class.field-invalid]="hasFieldError('category')">
           <option value="" disabled selected>Select category</option>
           <option value="food_drink">Food & Drink</option>
           <option value="fashion">Fashion</option>
@@ -52,14 +52,13 @@
           <option value="property_market">Property Market</option>
           <option value="automotive">Automotive</option>
         </select>
-        <div class="error" *ngIf="submitted && !category">Required</div>
+        <div class="error" *ngIf="fieldError('category')">{{ fieldError('category') }}</div>
       </div>
 
       <div class="field">
         <label>Discount %</label>
-        <input type="number" placeholder="0–100" [(ngModel)]="discount" min="0" max="100" />
-        <div class="error" *ngIf="submitted && isDiscountMissing()">Required</div>
-        <div class="error" *ngIf="submitted && isDiscountOutOfRange()">0–100 only</div>
+        <input type="number" placeholder="0–100" [(ngModel)]="discount" (ngModelChange)="clearFieldError('discount')" [class.field-invalid]="hasFieldError('discount')" min="0" max="100" />
+        <div class="error" *ngIf="fieldError('discount')">{{ fieldError('discount') }}</div>
       </div>
     </div>
   </div>
@@ -69,30 +68,33 @@
 
     <div class="field">
       <label>Outlets</label>
-      <input placeholder="Comma-separated store names" [(ngModel)]="outlets" />
-      <div class="error" *ngIf="submitted && isOutletsMissing()">Required</div>
+      <input placeholder="Comma-separated store names" [(ngModel)]="outlets" (ngModelChange)="clearFieldError('outlets')" [class.field-invalid]="hasFieldError('outlets')" />
+      <div class="error" *ngIf="fieldError('outlets')">{{ fieldError('outlets') }}</div>
+      <div class="outlet-preview" *ngIf="parsedOutlets.length">
+        <span class="outlet-tag" *ngFor="let outlet of parsedOutlets">{{ outlet }}</span>
+      </div>
     </div>
 
     <div class="field">
       <label>Terms & Conditions</label>
-      <textarea rows="2" placeholder="Restrictions, exclusions…" [(ngModel)]="termsAndConditions"></textarea>
-      <div class="error" *ngIf="submitted && !termsAndConditions.trim()">Required</div>
+      <textarea rows="2" placeholder="Restrictions, exclusions…" [(ngModel)]="termsAndConditions" (ngModelChange)="clearFieldError('termsAndConditions')" [class.field-invalid]="hasFieldError('termsAndConditions')"></textarea>
+      <div class="error" *ngIf="fieldError('termsAndConditions')">{{ fieldError('termsAndConditions') }}</div>
     </div>
 
     <div class="field-row">
       <div class="field">
         <label>Offer type</label>
-        <select [(ngModel)]="offerType">
+        <select [(ngModel)]="offerType" (ngModelChange)="clearFieldError('offerType')" [class.field-invalid]="hasFieldError('offerType')">
           <option value="" disabled selected>Select type</option>
           <option value="basic">Basic</option>
           <option value="premium">Premium</option>
         </select>
-        <div class="error" *ngIf="submitted && !offerType">Required</div>
+        <div class="error" *ngIf="fieldError('offerType')">{{ fieldError('offerType') }}</div>
       </div>
 
       <div class="field">
         <label>Usage limit</label>
-        <select [(ngModel)]="usageLimit">
+        <select [(ngModel)]="usageLimit" (ngModelChange)="clearFieldError('usageLimit')" [class.field-invalid]="hasFieldError('usageLimit')">
           <option value="" disabled selected>Select limit</option>
           <option value="unlimited">Unlimited</option>
           <option value="once">Once</option>
@@ -101,17 +103,19 @@
           <option value="month">Per month</option>
           <option value="year">Per year</option>
         </select>
+        <div class="error" *ngIf="fieldError('usageLimit')">{{ fieldError('usageLimit') }}</div>
       </div>
     </div>
 
     <div class="field">
       <label>Available days</label>
-      <div class="days-box">
+      <div class="days-box" [class.field-invalid]="hasFieldError('availability')">
         <label class="day-item" *ngFor="let day of days" [class.selected]="availability.includes(day)">
           <input type="checkbox" [value]="day" (change)="toggleDay(day, $event)" [checked]="availability.includes(day)" />
           <span>{{ day | titlecase }}</span>
         </label>
       </div>
+      <div class="error" *ngIf="fieldError('availability')">{{ fieldError('availability') }}</div>
     </div>
   </div>
 
@@ -122,30 +126,17 @@
       <div class="field">
         <label>Start date</label>
         <div class="date-input-wrap" (click)="openDatePicker(startDateInput)">
-          <input
-            #startDateInput
-            type="date"
-            [(ngModel)]="startDate"
-            [min]="today"
-            (click)="openDatePicker(startDateInput); $event.stopPropagation()"
-          />
+          <input #startDateInput type="date" [(ngModel)]="startDate" (ngModelChange)="clearFieldError('startDate')" [class.field-invalid]="hasFieldError('startDate')" [min]="today" (click)="openDatePicker(startDateInput); $event.stopPropagation()" />
         </div>
-        <div class="error" *ngIf="submitted && !startDate">Required</div>
+        <div class="error" *ngIf="fieldError('startDate')">{{ fieldError('startDate') }}</div>
       </div>
 
       <div class="field">
         <label>End date</label>
         <div class="date-input-wrap" (click)="openDatePicker(endDateInput)">
-          <input
-            #endDateInput
-            type="date"
-            [(ngModel)]="endDate"
-            [min]="startDate || today"
-            (click)="openDatePicker(endDateInput); $event.stopPropagation()"
-          />
+          <input #endDateInput type="date" [(ngModel)]="endDate" (ngModelChange)="clearFieldError('endDate')" [class.field-invalid]="hasFieldError('endDate')" [min]="startDate || today" (click)="openDatePicker(endDateInput); $event.stopPropagation()" />
         </div>
-        <div class="error" *ngIf="submitted && !endDate">Required</div>
-        <div class="error" *ngIf="submitted && startDate && endDate && isEndDateBeforeStart()">End date must be after start date</div>
+        <div class="error" *ngIf="fieldError('endDate')">{{ fieldError('endDate') }}</div>
       </div>
     </div>
 
@@ -153,7 +144,8 @@
       <label>Image</label>
       <input type="file" accept="image/*" (change)="onImageSelect($event)" />
       <span class="field-hint">Or paste a URL below</span>
-      <input type="text" placeholder="https://…" [(ngModel)]="image" />
+      <input type="text" placeholder="https://…" [(ngModel)]="image" (ngModelChange)="clearFieldError('image')" [class.field-invalid]="hasFieldError('image')" />
+      <div class="error" *ngIf="fieldError('image')">{{ fieldError('image') }}</div>
       <img *ngIf="image" class="image-preview" [src]="image" alt="Preview" />
     </div>
   </div>

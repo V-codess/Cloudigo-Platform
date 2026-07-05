@@ -72,7 +72,7 @@
   </article>
 </div>
 
-<nav class="pagination" *ngIf="!loading && totalPages > 1" aria-label="Offers pagination">
+<nav class="pagination" *ngIf="!loading && totalOffers > 0" aria-label="Offers pagination">
   <button type="button" class="page-btn nav-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
     ← Prev
   </button>
